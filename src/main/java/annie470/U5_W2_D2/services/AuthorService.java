@@ -5,19 +5,31 @@ import annie470.U5_W2_D2.exceptions.BadRequestException;
 import annie470.U5_W2_D2.exceptions.NotFoundException;
 import annie470.U5_W2_D2.payloads.AuthorDTO;
 import annie470.U5_W2_D2.repositories.AuthorRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class AuthorService {
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private Cloudinary imageUploader;
+
+    private static final long MAX_SIZE = 5 * 1024 * 1024;
+    private static final Set<String> ALLOWED_TYPES = Set.of( //GRAZIE INTERNET
+            "image/jpg",
+            "image/png"
+    );
 
 
     //GET ALL
@@ -63,4 +75,22 @@ public class AuthorService {
         Author found = this.getById(id);
         this.authorRepository.delete(found);
     }
+
+        //PATCH AVATAR
+        public Author uploadAvatar(MultipartFile file, long id) {
+            Author found = this.getById(id);
+            if (file.isEmpty()) throw new BadRequestException("File vuoto!");
+            if (file.getSize() > MAX_SIZE) throw new BadRequestException("File troppo grande!");
+            if (!ALLOWED_TYPES.contains(file.getContentType())) throw new BadRequestException("I formati permessi sono png e jpeg!");
+
+            try {
+                Map result = imageUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                String imageUrl= (String) result.get("url");
+                found.setAvatar(imageUrl);
+            } catch (IOException ex) {
+                throw  new RuntimeException(ex);
+            }
+            this.authorRepository.save(found);
+           return found;
+        }
 }

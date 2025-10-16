@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -49,9 +51,17 @@ public class AuthorController {
     }
 
     //PUT
-   @PutMapping("/{id}")    public Author modifyAuthor(@PathVariable long id, @RequestBody @Validated AuthorDTO body, BindingResult validationResult) {
+   @PutMapping("/{id}")
+   public Author modifyAuthor(@PathVariable long id, @RequestBody @Validated AuthorDTO body, BindingResult validationResult) {
        if(validationResult.hasErrors()) { throw  new ValidationException(validationResult.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList());
        }
        return this.authorService.getAndUpdate(id, body);
    }
+
+   //PATCH ADD AVATAR
+    @PatchMapping("/{id}")
+    public Author updateImg(@PathVariable long id, @RequestParam("avatar")MultipartFile file) throws IOException {
+        return this.authorService.uploadAvatar(file, id);
+    }
+
 }
