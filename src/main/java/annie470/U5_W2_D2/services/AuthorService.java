@@ -25,7 +25,7 @@ public class AuthorService {
         Pageable pageable = PageRequest.of(pageN, pageSize);
         return this.authorRepository.findAll(pageable);
     }
-//
+
 //    //POST
     public Author saveAuthor(AuthorDTO payload) {
         //verifico che lo user che sto salvando non abbia la stessa email di uno gia presente in db
@@ -44,7 +44,12 @@ public class AuthorService {
     //PUT UPDATE
     public Author getAndUpdate( long id, AuthorDTO payload) {
         Author found = this.getById(id);
-        this.authorRepository.findByEmail(payload.email()).ifPresent(author -> {throw new BadRequestException("Email gia in utilizzo!");});
+        this.authorRepository.findByEmail(payload.email())
+                .ifPresent(author -> {
+                    if(author.getId() != id) {  //E SE NON VOLESSI CAMBIARE EMAIL?
+                        throw new BadRequestException("Email già in utilizzo!");
+                    }
+                });
         found.setName(payload.name());
         found.setSurname(payload.surname());
         found.setEmail(payload.email());

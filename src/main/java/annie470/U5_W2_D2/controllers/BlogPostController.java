@@ -1,11 +1,13 @@
 package annie470.U5_W2_D2.controllers;
 
 import annie470.U5_W2_D2.entities.BlogPost;
-import annie470.U5_W2_D2.payloads.BlogPostUpdatePayload;
-import annie470.U5_W2_D2.payloads.NewBlogPostPayload;
+import annie470.U5_W2_D2.exceptions.ValidationException;
+import annie470.U5_W2_D2.payloads.BlogPostUpdateDTO;
+import annie470.U5_W2_D2.payloads.NewBlogPostDTO;
 import annie470.U5_W2_D2.services.BlogPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,13 +33,15 @@ public class BlogPostController {
     //POST
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BlogPost createBlogPost(@RequestBody NewBlogPostPayload body) {
+    public BlogPost createBlogPost(@RequestBody NewBlogPostDTO body, BindingResult validationResult) {
+        if(validationResult.hasErrors()) { throw  new ValidationException(validationResult.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList());
+        }
         return this.blogPostsService.saveBlogPost(body);
     }
 
     //PUT
     @PutMapping("/{id}")
-    public  BlogPost getAndUpdate(@PathVariable long id,  @RequestBody BlogPostUpdatePayload body) {
+    public  BlogPost getAndUpdate(@PathVariable long id,  @RequestBody BlogPostUpdateDTO body) {
         return this.blogPostsService.findAndUpdate(id, body);
     }
 

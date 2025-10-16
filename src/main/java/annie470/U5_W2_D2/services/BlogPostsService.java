@@ -3,8 +3,8 @@ package annie470.U5_W2_D2.services;
 import annie470.U5_W2_D2.entities.Author;
 import annie470.U5_W2_D2.entities.BlogPost;
 import annie470.U5_W2_D2.exceptions.NotFoundException;
-import annie470.U5_W2_D2.payloads.BlogPostUpdatePayload;
-import annie470.U5_W2_D2.payloads.NewBlogPostPayload;
+import annie470.U5_W2_D2.payloads.BlogPostUpdateDTO;
+import annie470.U5_W2_D2.payloads.NewBlogPostDTO;
 import annie470.U5_W2_D2.repositories.BlogPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +26,9 @@ public class BlogPostsService {
     }
 
     //POST
-    public BlogPost saveBlogPost(NewBlogPostPayload payload) {
-        Author author = this.authorService.getById(payload.getAuthorId());
-        BlogPost newPost = new BlogPost(payload.getCategory(), payload.getTitle(), payload.getContent(), payload.getTimeLecture(), author);
+    public BlogPost saveBlogPost(NewBlogPostDTO payload) {
+        Author author = this.authorService.getById(payload.authorId());
+        BlogPost newPost = new BlogPost(payload.category(), payload.title(), payload.content(), payload.timeLecture(), author);
         newPost.setCover("http://picsum.photos/200/300");
         this.blogPostRepository.save(newPost);
         return  newPost;
@@ -40,12 +40,12 @@ public class BlogPostsService {
     }
 
     //PUT UPDATE
-    public BlogPost findAndUpdate(long id, BlogPostUpdatePayload payload){
+    public BlogPost findAndUpdate(long id, BlogPostUpdateDTO payload){
         BlogPost found = this.findPostById(id);
-        found.setCategory(payload.getCategory());
-        found.setTitle(payload.getTitle());
-        found.setContent(payload.getContent());
-        found.setTimeLecture(payload.getTimeLecture());
+        found.setCategory(payload.category());
+        found.setTitle(payload.title());
+        found.setContent(payload.content());
+        found.setTimeLecture(payload.timeLecture());
         this.blogPostRepository.save(found);
         return found;
     }
