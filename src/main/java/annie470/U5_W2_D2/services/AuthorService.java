@@ -28,8 +28,9 @@ public class AuthorService {
     private static final long MAX_SIZE = 5 * 1024 * 1024;
     private static final Set<String> ALLOWED_TYPES = Set.of( //GRAZIE INTERNET
             "image/jpg",
-            "image/png"
-    );
+            "image/png",
+            "image/jpeg"
+            );
 
 
     //GET ALL

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/authors")
@@ -59,7 +59,7 @@ public class AuthorController {
    }
 
    //PATCH ADD AVATAR
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/avatar")
     public Author updateImg(@PathVariable long id, @RequestParam("avatar")MultipartFile file) throws IOException {
         return this.authorService.uploadAvatar(file, id);
     }
