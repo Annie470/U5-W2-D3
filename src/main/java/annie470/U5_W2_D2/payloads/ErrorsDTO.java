@@ -1,0 +1,9 @@
+package annie470.U5_W2_D2.payloads;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+
+public record ErrorsDTO(
+     String message,
+     LocalDateTime date) {}
