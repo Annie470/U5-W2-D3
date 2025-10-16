@@ -8,6 +8,7 @@ import annie470.U5_W2_D2.services.BlogPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class BlogPostController {
     //POST
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BlogPost createBlogPost(@RequestBody NewBlogPostDTO body, BindingResult validationResult) {
+    public BlogPost createBlogPost(@RequestBody @Validated NewBlogPostDTO body, BindingResult validationResult) {
         if(validationResult.hasErrors()) { throw  new ValidationException(validationResult.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList());
         }
         return this.blogPostsService.saveBlogPost(body);
@@ -41,7 +42,8 @@ public class BlogPostController {
 
     //PUT
     @PutMapping("/{id}")
-    public  BlogPost getAndUpdate(@PathVariable long id,  @RequestBody BlogPostUpdateDTO body) {
+    public BlogPost getAndUpdate(@PathVariable long id, @RequestBody @Validated BlogPostUpdateDTO body, BindingResult validationResult) {
+        if(validationResult.hasErrors()) {throw new ValidationException(validationResult.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList());}
         return this.blogPostsService.findAndUpdate(id, body);
     }
 
